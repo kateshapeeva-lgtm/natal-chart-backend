@@ -100,8 +100,11 @@ def calculate_natal_chart(payload: NatalRequest) -> NatalResponse:
 
     swe.set_ephe_path(".")
 
-    sun_lon, *_ = swe.calc_ut(jd_ut, swe.SUN)
-    moon_lon, *_ = swe.calc_ut(jd_ut, swe.MOON)
+   # pyswisseph возвращает (xx, retflag), где xx — массив значений
+sun_xx, _ = swe.calc_ut(jd_ut, swe.SUN)
+moon_xx, _ = swe.calc_ut(jd_ut, swe.MOON)
+sun_lon = float(sun_xx[0])
+moon_lon = float(moon_xx[0])
 
     houses, ascmc = swe.houses(jd_ut, payload.latitude, payload.longitude, b"P")
     asc_deg = float(ascmc[0])
@@ -123,4 +126,5 @@ def calculate_natal_chart(payload: NatalRequest) -> NatalResponse:
 @app.get("/health")
 def health() -> dict:
     return {"status": "ok"}
+
 
